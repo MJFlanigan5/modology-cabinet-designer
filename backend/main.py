@@ -1,10 +1,13 @@
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
+from pydantic import BaseModel
+from typing import Dict, Any
 
 from app.routers import cabinets, materials, hardware, cutlists
 from app.database import engine, get_db
 from app.models import Base
+from app.gcode_generator import generate_gcode, GCodeConfig
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -21,7 +24,7 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# CORS - Allow Cloudflare Pages and local development
+# CORS - Allow Vercel, Fly.io, and local development
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -29,7 +32,8 @@ app.add_middleware(
         "http://localhost:4173",
         "https://modologystudios.com",
         "*.pages.dev",  # Cloudflare Pages preview URLs
-        "*.onrender.com"  # Render backend
+        "*.onrender.com",  # Render backend
+        "*.fly.dev"  # Fly.io backend
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -64,6 +68,38 @@ async def init_database():
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+# G-code generation endpoint
+class GCodeRequest(BaseModel):
+    """Request model for G-code generation"""
+    cutList: Dict[str, Any]  # Cut list from cutlists router
+
+@app.post("/api/gcode")
+async def generate_gcode_endpoint(request: GCodeRequest):
+    """
+    Generate G-code from cut list data
+    """
+    try:
+        # Generate G-code using the generator
+        gcode_content = generate_gcode(request.cutList)
+        
+        # Generate metadata
+        total_sheets = len(request.cutList.get("cutList", []))
+        total_cuts = sum(len(sheet.get("cuts", [])) for sheet in request.cutList.get("cutList", []))
+        
+        metadata = {
+            "gcode": gcode_content,
+            "metadata": {
+                "totalSheets": total_sheets,
+                "totalCuts": total_cuts,
+                "estimatedTime": total_cuts * 2,  # ~2 min per operation
+                "materialThickness": 18.0  # mm (3/4" plywood)
+            }
+        }
+        
+        return metadata
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to generate G-code: {str(e)}")
 
 # Include routers
 app.include_router(cabinets.router)
