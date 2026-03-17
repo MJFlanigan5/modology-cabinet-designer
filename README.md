@@ -583,14 +583,85 @@ npm test
 - [ ] Plan Phase 4 features
 
 ### Phase 4: Future Enhancements
-- [ ] Project templates (kitchen layouts, vanity sets)
-- [ ] Live supplier price feeds via API
-- [ ] Mobile companion app
-- [ ] Offline mode with sync
-- [ ] Advanced nesting algorithm (non-guillotine)
-- [ ] Multi-material projects
-- [ ] Edge banding optimization
-- [ ] Hardware recommendations based on design
+
+#### 🔄 In Progress
+
+- [ ] **Project Templates (Kitchen Layouts, Vanity Sets)**
+  - Pre-built cabinet configurations for common room types
+  - Kitchen layouts: L-shaped, U-shaped, galley, island configurations
+  - Vanity sets: single sink, double sink, floating vanity options
+  - Bookshelf and storage unit templates
+  - Customizable template parameters (dimensions, materials, hardware)
+  - Template sharing and community contributions
+  - One-click template import with auto-scaling to room dimensions
+
+- [ ] **Live Supplier Price Feeds via API**
+  - Real-time price integration with supported suppliers
+  - Automated price updates (daily/weekly sync)
+  - Price history tracking and trend analysis
+  - Automatic cost recalculation when prices change
+  - Price alerts for significant cost changes
+  - Currency conversion for international suppliers
+  - Fallback to cached prices when API unavailable
+
+#### 📋 Planned
+
+- [ ] **Mobile Companion App**
+  - iOS and Android native apps (React Native)
+  - View and edit projects on-the-go
+  - Take photos and attach to projects
+  - Barcode scanning for material inventory
+  - Push notifications for project updates
+  - Offline viewing of cut lists and 3D previews
+  - Quick material calculator for in-store use
+  - Share projects with team members via mobile
+
+- [ ] **Offline Mode with Sync**
+  - Full offline functionality using service workers
+  - Local storage for projects, materials, and hardware
+  - Background sync when connection restored
+  - Conflict resolution for concurrent edits
+  - Progressive Web App (PWA) support
+  - Offline 3D preview rendering
+  - Cache management and storage limits
+
+- [ ] **Advanced Nesting Algorithm (Non-Guillotine)**
+  - True shape nesting for irregular parts
+  - Optimized packing for CNC routers
+  - Support for rotated parts at any angle
+  - Multiple sheet size optimization
+  - Nesting preview with drag-to-adjust
+  - Automatic grain direction override for better yield
+  - Export nested layouts to DXF/SVG
+  - Estimated vs. actual waste comparison
+
+- [ ] **Multi-Material Projects**
+  - Mix plywood, MDF, hardwood, and other materials in one project
+  - Material-specific cutting parameters
+  - Cross-material cost optimization
+  - Visual differentiation in 3D preview
+  - Separate cut lists per material type
+  - Material compatibility warnings
+  - Alternative material suggestions
+
+- [ ] **Edge Banding Optimization**
+  - Automatic edge banding calculation based on exposed edges
+  - Support for different banding types (PVC, wood veneer, iron-on)
+  - Banding cost estimation and supplier links
+  - Visual edge banding indicators in 3D preview
+  - Banding waste calculation
+  - Pre-glued vs. separate glue options
+  - Banding machine settings export
+
+- [ ] **Hardware Recommendations Based on Design**
+  - AI-powered hardware suggestions based on cabinet type
+  - Weight capacity calculations for slides and hinges
+  - Hardware quantity optimization (avoid over-ordering)
+  - Compatibility checking between components
+  - Style matching (modern, traditional, rustic)
+  - Budget-tier recommendations
+  - Hardware placement guides and templates
+  - Automatic hardware list generation for projects
 
 ## 🤝 Contributing
 
