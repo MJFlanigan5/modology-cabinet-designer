@@ -15,6 +15,7 @@ Includes routers for:
 - Advanced Nesting (Phase 4 - non-guillotine algorithms)
 - Edge Banding (Phase 4 - edge banding optimization)
 - Hardware Recommendations (Phase 4 - design-based suggestions)
+- Scrap Tracker (Phase 5 - leftover piece tracking)
 """
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
@@ -25,7 +26,7 @@ from typing import Dict, Any, Optional, List
 from app.routers import (
     cabinets, materials, hardware, cutlists, auth, collaboration,
     projects, gcode, stripe, price_feeds, advanced_nesting,
-    edge_banding, hardware_recommendations
+    edge_banding, hardware_recommendations, scrap
 )
 from app.templates import router as templates_router
 from app.database import engine, get_db
@@ -63,8 +64,9 @@ API for AI-powered cabinet design tool with:
 - Advanced nesting algorithms
 - Edge banding optimization
 - Hardware recommendations
+- Scrap tracking and suggestions
     """,
-    version="2.0.0",
+    version="2.1.0",
     lifespan=lifespan
 )
 
@@ -89,7 +91,7 @@ app.add_middleware(
 async def root():
     return {
         "message": "Modology Cabinet Designer API",
-        "version": "2.0.0",
+        "version": "2.1.0",
         "status": "running",
         "features": [
             "Cabinet design and management",
@@ -107,7 +109,8 @@ async def root():
             "Live supplier price feeds",
             "Advanced nesting algorithms",
             "Edge banding optimization",
-            "Hardware recommendations"
+            "Hardware recommendations",
+            "Scrap tracking and suggestions"
         ],
         "endpoints": {
             "cabinets": "/api/cabinets",
@@ -125,13 +128,14 @@ async def root():
             "price_feeds": "/api/price-feeds",
             "advanced_nesting": "/api/advanced-nesting",
             "edge_banding": "/api/edge-banding",
-            "hardware_recommendations": "/api/hardware-recommendations"
+            "hardware_recommendations": "/api/hardware-recommendations",
+            "scrap": "/api/scrap"
         }
     }
 
 @app.get("/health")
 async def health():
-    return {"status": "healthy", "version": "2.0.0"}
+    return {"status": "healthy", "version": "2.1.0"}
 
 @app.get("/init-db")
 async def init_database():
@@ -347,3 +351,6 @@ app.include_router(price_feeds.router)
 app.include_router(advanced_nesting.router)
 app.include_router(edge_banding.router)
 app.include_router(hardware_recommendations.router)
+
+# Phase 5 routers
+app.include_router(scrap.router)
