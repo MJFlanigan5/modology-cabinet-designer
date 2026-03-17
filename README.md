@@ -6,6 +6,39 @@ AI-powered cabinet design tool that makes professional fabrication accessible to
 
 Make professional cabinet fabrication accessible to DIYers and small shops by automating complex parts: design optimization, cut list generation, and hardware sourcing.
 
+## 🎨 Design System
+
+This project uses [Pencil.dev](https://pencil.dev) for AI-powered frontend design generation. 
+
+**Design Specifications:** See [`design/PENCIL_DESIGN_SPECS.md`](design/PENCIL_DESIGN_SPECS.md) for:
+- Brand guidelines (colors, typography, design principles)
+- Screen designs with Pencil prompts (14 screens)
+- Component library specifications (buttons, inputs, cards, navigation, modals, etc.)
+- Responsive breakpoints
+- Accessibility guidelines
+- Animation specifications
+
+### How to Use Pencil.dev
+
+1. Sign up at https://pencil.dev
+2. Create a project called "Modology Cabinet Designer"
+3. Copy prompts from `design/PENCIL_DESIGN_SPECS.md`
+4. Paste into Pencil's AI prompt field
+5. Iterate on generated designs
+6. Export to Figma or as images
+7. Commit exported assets to `/designs/` folder
+
+### Design Assets
+
+```
+/design/
+├── PENCIL_DESIGN_SPECS.md    # Design prompts and specifications
+└── /designs/                  # Exported design files (Figma, images)
+    ├── /screens/
+    ├── /components/
+    └── /assets/
+```
+
 ## 🚀 Features
 
 ### Core Features (MVP)
@@ -207,6 +240,9 @@ Make professional cabinet fabrication accessible to DIYers and small shops by au
 
 ```
 modology-cabinet-designer/
+├── design/
+│   ├── PENCIL_DESIGN_SPECS.md    # Pencil.dev design specifications
+│   └── designs/                   # Exported design files
 ├── backend/
 │   ├── app/
 │   │   ├── __init__.py
@@ -1180,6 +1216,7 @@ MIT License - see LICENSE file for details.
 
 - [Modology Studios](https://www.modologystudios.com/)
 - [GitHub Repository](https://github.com/MJFlanigan5/modology-cabinet-designer)
+- [Design Specifications](design/PENCIL_DESIGN_SPECS.md)
 
 ## 💬 Support
 
