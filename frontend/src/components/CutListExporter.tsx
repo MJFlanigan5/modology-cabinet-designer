@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState } from "react";
 import { Cabinet, Material } from "./CabinetBuilder";
 
@@ -101,6 +100,36 @@ export default function CutListExporter({
     link.click();
   };
 
+  const downloadGCode = async () => {
+    if (!cutList) return;
+
+    // Generate G-code from cut list
+    try {
+      const response = await fetch("http://localhost:8000/api/gcode", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ cutList })
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to generate G-code");
+      }
+
+      const data = await response.json();
+      const gcodeContent = data.gcode;
+
+      const blob = new Blob([gcodeContent], { type: "text/plain;charset=utf-8;" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "cabinet_parts.nc"; // .nc is common for G-code
+      link.click();
+    } catch (err) {
+      setError("Could not generate G-code. Please try again.");
+    }
+  };
+
   return (
     <div className="space-y-4">
       {/* Generate Button */}
@@ -177,6 +206,13 @@ export default function CutListExporter({
               <span className="mr-2">📐</span>
               Download DXF (for CNC)
             </button>
+            <button
+              onClick={downloadGCode}
+              className="w-full py-2 px-4 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors flex items-center justify-center"
+            >
+              <span className="mr-2">⚙️</span>
+              Download G-code (for CNC)
+            </button>
           </div>
         </div>
       )}
@@ -225,7 +261,13 @@ function generatePDFHTML(
     <h2>Summary</h2>
     <p><strong>Total Sheets:</strong> ${cutList.totalSheets}</p>
     <p><strong>Waste:</strong> 
-      <span class="${cutList.wastePercentage < 15 ? 'good' : cutList.wastePercentage < 25 ? 'warning' : 'bad'}">
+      <span class="${
+        cutList.wastePercentage < 15
+          ? 'good'
+          : cutList.wastePercentage < 25
+          ? 'warning'
+          : 'bad'
+      }">
         ${cutList.wastePercentage.toFixed(1)}%
       </span>
     </p>
@@ -297,7 +339,6 @@ function generatePDFHTML(
 
 function generateCSV(cutList: CutListResponse, cabinets: Cabinet[]): string {
   let csv = "Sheet,Part,X Position,Y Position,Width,Height,Material\n";
-
   cutList.cutList.forEach((sheet, sheetIndex) => {
     sheet.cuts.forEach((cut, cutIndex) => {
       csv += `${sheetIndex + 1},${cutIndex + 1},${cut.x.toFixed(2)},${cut.y.toFixed(2)},${cut.width.toFixed(2)},${cut.height.toFixed(2)},${cut.partName}\n`;
