@@ -1,239 +1,345 @@
 # Modology Cabinet Designer
 
-> Making professional cabinet fabrication accessible to everyone
+AI-powered cabinet design tool that makes professional fabrication accessible to everyone.
 
-[![CI/CD](https://github.com/MJFlanigan5/modology-cabinet-designer/actions/workflows/frontend.yml/badge.svg)](https://github.com/MJFlanigan5/modology-cabinet-designer/actions/workflows/frontend.yml)
-[![Security Scan](https://github.com/MJFlanigan5/modology-cabinet-designer/actions/workflows/frontend.yml/badge.svg)](https://github.com/MJFlanigan5/modology-cabinet-designer/security)
-
----
-
-## 🎯 Product Vision
+## 🎯 Vision
 
 Make professional cabinet fabrication accessible to DIYers and small shops by automating the complex parts: design optimization, cut list generation, and hardware sourcing.
 
-### Target Users
-- **DIY Woodworkers**: Weekend warriors building cabinets for kitchens, bathrooms, vanities
-- **Small Cabinet Shops**: 1-3 person shops that need to speed up quoting and material planning
-- **Makerspaces & FabLabs**: Community spaces that need tools for teaching cabinet design
+## 🚀 Features
 
----
-
-## 🚀 MVP Features
-
-### Core Features (Must Have)
-| Feature | What it does |
-|---|---|
-| **Cabinet Builder UI** | Drag-and-drop cabinet components (boxes, doors, drawers, shelves) |
-| **3D Preview** | Real-time 3D visualization of the cabinet |
-| **Material Library** | Pre-configured materials (plywood, MDF, hardwood) with dimensions |
-| **Cut List Generator** | Optimized 2D cutting plans for sheet goods |
-| **Hardware Finder** | Suggest hinges, slides, screws based on cabinet dimensions |
-| **Pricing Calculator** | Estimate material and hardware costs |
-| **Export Options** | PDF cut list, CSV, DXF for CNC machines |
-| **User Accounts** | Save projects, return later |
+### Core Features (MVP)
+- **Cabinet Builder UI** - Drag-and-drop cabinet components (boxes, doors, drawers, shelves)
+- **3D Preview** - Real-time 3D visualization of cabinet designs
+- **Material Library** - Pre-configured materials (plywood, MDF, hardwood) with dimensions
+- **Cut List Generator** - Optimized 2D cutting plans for sheet goods
+- **Hardware Finder** - Suggest hinges, slides, screws based on cabinet dimensions
+- **Pricing Calculator** - Estimate material and hardware costs
+- **Export Options** - PDF cut lists, CSV, DXF for CNC machines
+- **User Accounts** - Save projects and return later
 
 ### Nice-to-Have (Phase 2)
-| Feature | What it does |
-|---|---|
-| **Project Templates** | Pre-built cabinet designs (kitchen, vanity, bookshelf) |
-| **Waste Optimization** | Bin packing algorithm for sheet goods |
-| **CNC G-code Export** | Direct output for ShopBot, Shapeoko, etc. |
-| **Hardware Integration** | Direct links to suppliers (Rockler, Woodcraft, etc.) |
-| **Collaboration** | Share projects with others |
-
----
+- **Project Templates** - Pre-built cabinet designs (kitchen, vanity, bookshelf)
+- **Waste Optimization** - Bin packing algorithm for sheet goods
+- **CNC G-code Export** - Direct output for ShopBot, Shapeoko, etc.
+- **Hardware Integration** - Direct links to suppliers (Rockler, Woodcraft, etc.)
+- **Collaboration** - Share projects with others
 
 ## 🛠️ Tech Stack
 
-| Layer | Technology | Why |
-|---|---|---|
-| **Frontend** | Next.js 14 + React | Great DX, built-in API routes, easy deployment |
-| **3D Rendering** | Three.js | Industry standard for WebGL, great docs |
-| **Styling** | Tailwind CSS | Fast development, responsive out of the box |
-| **Backend** | Python + FastAPI | Perfect for calculations, async, type hints |
-| **Database** | PostgreSQL | Robust, good for relational data |
-| **Authentication** | Clerk or Auth0 | User accounts, SSO ready |
-| **Payment** | Stripe | Industry standard, good docs |
-| **Storage** | AWS S3 or Google Cloud Storage | File storage for exports |
-| **Deployment** | Cloudflare Pages (frontend) + Railway (backend) | Fast, global CDN, easy deployment |
+### Frontend
+| Technology | Purpose |
+|---|---|
+| **Next.js 14** | React framework with App Router |
+| **React** | UI components |
+| **Three.js** | 3D rendering and visualization |
+| **Tailwind CSS** | Styling and responsive design |
+| **Clerk** | User authentication |
+| **Vercel** | Deployment (or Cloudflare Pages) |
 
----
+### Backend
+| Technology | Purpose |
+|---|---|
+| **FastAPI** | Python web framework |
+| **SQLAlchemy** | ORM and database management |
+| **PostgreSQL** | Database (via Railway) |
+| **Pydantic** | Data validation |
+| **Uvicorn** | ASGI server |
+| **Railway** | Deployment and hosting |
 
-## 📦 Project Structure
+## 📁 Project Structure
 
 ```
 modology-cabinet-designer/
-├── frontend/                 # Next.js 14 frontend
+├── backend/
+│   ├── app/
+│   │   ├── __init__.py
+│   │   ├── database.py          # Database configuration
+│   │   ├── models.py            # SQLAlchemy models
+│   │   ├── init_db.py           # Database initialization script
+│   │   └── routers/
+│   │       ├── __init__.py
+│   │       ├── cabinets.py       # Cabinet CRUD endpoints
+│   │       ├── materials.py      # Material management
+│   │       └── hardware.py      # Hardware inventory
+│   ├── main.py                 # FastAPI application
+│   ├── requirements.txt         # Python dependencies
+│   └── main.py                 # Application entry point
+├── frontend/
 │   ├── src/
-│   │   ├── app/             # Next.js App Router
-│   │   ├── components/      # React components
-│   │   ├── lib/             # Utilities
-│   │   └── styles/          # Global styles
-│   ├── public/              # Static assets
-│   ├── package.json
-│   ├── tsconfig.json
-│   └── tailwind.config.ts
-├── backend/                  # FastAPI backend
-│   ├── main.py              # Application entry point
-│   ├── api/                 # API routes
-│   ├── models/              # Database models
-│   ├── schemas/             # Pydantic schemas
-│   ├── services/            # Business logic
-│   └── requirements.txt
+│   │   ├── app/
+│   │   │   ├── layout.tsx       # Root layout with ClerkProvider
+│   │   │   ├── page.tsx         # Home page
+│   │   │   └── globals.css      # Global styles
+│   │   └── lib/
+│   │       └── api.ts           # API client
+│   ├── package.json             # NPM dependencies
+│   ├── tsconfig.json           # TypeScript config
+│   ├── tailwind.config.ts       # Tailwind CSS config
+│   └── next.config.mjs          # Next.js config
 ├── .github/
 │   └── workflows/
-│       ├── frontend.yml      # Frontend CI/CD
-│       ├── backend.yml       # Backend CI/CD
-│       └── rollback.yml      # Rollback workflow
-└── README.md
+│       ├── frontend.yml          # Frontend CI/CD (Cloudflare Pages)
+│       ├── backend.yml           # Backend CI/CD (Railway)
+│       └── rollback.yml          # Rollback workflow
+├── README.md
+└── LICENSE
 ```
 
----
+## 🗄️ Database Setup
 
-## 🚢 Deployment
+### 1. Create PostgreSQL Database on Railway
 
-### Frontend (Cloudflare Pages)
+1. Go to your Railway project dashboard
+2. Click **New Service** → **Database** → **PostgreSQL**
+3. Wait for the database to deploy (30-60 seconds)
+4. Click on the PostgreSQL service
+5. Go to the **Variables** tab
+6. Copy the `DATABASE_URL`
+   
+   **Example format:**
+   ```
+   postgresql://postgres:password@containers.us-west-1.railway.app:5432/railway
+   ```
 
-The frontend is automatically deployed to Cloudflare Pages using GitHub Actions.
+### 2. Add DATABASE_URL to Railway Backend
 
-**What happens on push to `main`:**
-1. Lint (ESLint)
-2. Test (Jest)
-3. Build (Next.js)
-4. Security scan (Trivy)
-5. Deploy to Cloudflare Pages production
-6. Verify deployment
-7. Send Slack notification (optional)
+1. Go back to your FastAPI backend service
+2. Go to the **Variables** tab
+3. Add a new variable:
+   - **Name:** `DATABASE_URL`
+   - **Value:** Paste the DATABASE_URL you copied from the PostgreSQL service
+   - **Or:** Use the "Reference" feature to link to the PostgreSQL service
 
-**What happens on pull requests:**
-1. Same CI checks
-2. Deploy to Cloudflare Pages preview environment
-3. Comment PR with preview URL
+### 3. Initialize Database Tables
 
-**Manual rollback:**
-- Go to Actions tab → Rollback workflow
-- Select target tag (e.g., `v1.0.1`)
-- Choose component (frontend, backend, or both)
-- Deployment rolls back using Wrangler CLI
+**Option A: Automatic (Recommended)**
+
+The database tables will be created automatically when the backend starts, thanks to the `lifespan` function in `main.py`.
+
+**Option B: Manual Endpoint**
+
+Visit: `https://your-backend.railway.app/init-db`
+
+**Expected response:**
+```json
+{
+  "status": "success",
+  "message": "Database tables created/verified",
+  "tables": [
+    "cabinets",
+    "materials",
+    "hardware",
+    "cabinet_components",
+    "cut_lists",
+    "cut_items",
+    "projects",
+    "project_cabinets"
+  ]
+}
+```
+
+### 4. Add Database URL to GitHub Secrets
+
+For CI/CD pipelines:
+
+1. Go to: https://github.com/MJFlanigan5/modology-cabinet-designer/settings/secrets/actions
+2. Add secret:
+   - **Name:** `RAILWAY_DATABASE_URL`
+   - **Value:** Your DATABASE_URL from Railway
+
+## 🔐 Environment Variables
 
 ### Backend (Railway)
 
-The backend is automatically deployed to Railway using GitHub Actions.
-
-**What happens on push to `backend/main`:**
-1. Lint (Ruff)
-2. Test (Pytest)
-3. Build Docker image
-4. Push to GitHub Container Registry
-5. Deploy to Railway
-6. Run database migrations
-7. Health check
-8. Send Slack notification (optional)
-
----
-
-## 🔑 Required Secrets
-
-### Frontend (Cloudflare Pages)
-
-| Secret | Description | Where to Get It |
+| Variable | Description | How to Get |
 |---|---|---|
-| `CLOUDFLARE_API_TOKEN` | Cloudflare API token for Wrangler CLI | https://dash.cloudflare.com/profile/api-tokens |
-| `CLOUDFLARE_ACCOUNT_ID` | Your Cloudflare Account ID | Cloudflare Dashboard URL (in the URL) |
-| `NEXT_PUBLIC_API_URL` | Backend API URL | Your Railway backend URL |
+| `DATABASE_URL` | PostgreSQL connection string | Auto-populated by Railway |
+| `NEXT_PUBLIC_API_URL` | Your Railway backend URL | Railway dashboard |
 | `NEXTAUTH_SECRET` | Random string for NextAuth | `openssl rand -base64 32` |
-| `NEXTAUTH_URL` | Your Cloudflare Pages URL | `https://modology-cabinet-designer.pages.dev` |
-| `CLERK_PUBLISHABLE_KEY` | Clerk publishable key | https://dashboard.clerk.com/ |
-| `CLERK_SECRET_KEY` | Clerk secret key | https://dashboard.clerk.com/ |
+| `NEXTAUTH_URL` | Your Cloudflare Pages URL | Cloudflare Pages dashboard |
+| `CLERK_PUBLISHABLE_KEY` | Clerk publishable key | Clerk Dashboard |
+| `CLERK_SECRET_KEY` | Clerk secret key | Clerk Dashboard |
+| `STRIPE_API_KEY` | Stripe API key | Stripe Dashboard |
+| `STRIPE_WEBHOOK_SECRET` | Stripe webhook secret | Stripe Dashboard |
 
-**Add secrets here:** https://github.com/MJFlanigan5/modology-cabinet-designer/settings/secrets/actions
+### Frontend (Cloudflare Pages)
 
-### Backend (Railway)
-
-| Secret | Description | Where to Get It |
-|---|---|---|
-| `RAILWAY_TOKEN` | Railway authentication token | https://railway.app/account/tokens |
-| `RAILWAY_DATABASE_URL` | Production database URL | Railway Project Variables |
-| `DATABASE_URL` | PostgreSQL connection URL | Railway Project Variables |
-| `STRIPE_SECRET_KEY` | Stripe secret key | https://dashboard.stripe.com/apikeys |
-| `STRIPE_WEBHOOK_SECRET` | Stripe webhook secret | Stripe Dashboard → Webhooks |
-
-**Add secrets here:** https://github.com/MJFlanigan5/modology-cabinet-designer/settings/secrets/actions
-
-### Optional
-
-| Secret | Description |
+| Variable | Description |
 |---|---|
-| `SLACK_WEBHOOK_URL` | Slack webhook for notifications |
+| `NEXT_PUBLIC_API_URL` | Your Railway backend URL |
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Clerk publishable key |
 
----
+## 📊 Database Models
 
-## 🗓️ Development Phases
+### Core Tables
+| Table | Description |
+|---|---|
+| `cabinets` | Cabinet designs with dimensions and materials |
+| `materials` | Sheet goods (plywood, MDF, hardwood) with pricing |
+| `hardware` | Cabinet hardware (hinges, slides, handles) |
+| `cabinet_components` | Individual parts of a cabinet |
+| `cut_lists` | Optimized cutting plans for CNC/saw |
+| `cut_items` | Individual cut positions on sheets |
+| `projects` | Group cabinets into projects |
 
-### Phase 1: Foundation (Weeks 1-4)
-- ✅ Set up project, Next.js + FastAPI scaffolding, GitHub repo
-- ⏳ Build basic cabinet component library (boxes, doors, drawers)
-- ⏳ Implement 2D cut list generator (basic rectangle packing)
-- ⏳ Add material library and pricing calculator
+## 🚦 Getting Started
 
-### Phase 2: Core MVP (Weeks 5-8)
-- ⏳ Implement 3D preview with Three.js
-- ⏳ Build hardware finder (basic matching rules)
-- ⏳ Add export functionality (PDF, CSV, DXF)
-- ⏳ Set up user accounts (Clerk/Auth0) and project persistence
+### Prerequisites
+- Node.js 18+
+- Python 3.11+
+- PostgreSQL (local or Railway)
+- Railway account
+- GitHub account
+- Cloudflare account (for Pages deployment)
+- Clerk account (for authentication)
 
-### Phase 3: Polish & Revenue (Weeks 9-12)
-- ⏳ Integrate Stripe for payments
-- ⏳ Build pricing page and subscription/paywall
-- ⏳ Add project templates and documentation
-- ⏳ Performance testing, bug fixes, beta launch
+### Local Development
 
-### Phase 4: Launch & Iterate (Week 13+)
-- ⏳ Soft launch to 10 beta users
-- ⏳ Collect feedback, iterate quickly
-- ⏳ Public launch, marketing push
-- ⏳ Plan Phase 2 features (CNC export, hardware integration)
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/MJFlanigan5/modology-cabinet-designer.git
+   cd modology-cabinet-designer
+   ```
 
----
+2. **Set up backend:**
+   ```bash
+   cd backend
+   pip install -r requirements.txt
+   export DATABASE_URL="postgresql://user:password@localhost:5432/cabinet_designer"
+   python -m app.init_db
+   uvicorn main:app --reload
+   ```
 
-## 💰 Pricing Model
+3. **Set up frontend:**
+   ```bash
+   cd frontend
+   npm install
+   npm run dev
+   ```
 
-| Tier | Features | Price |
-|---|---|---|
-| **Starter** | 3 cabinets/month, basic cut lists, web-only | Free |
-| **Pro** | Unlimited cabinets, CNC export, hardware finder | $15/month |
-| **Lifetime** | All Pro features, one-time payment | $99 |
+4. **Access the application:**
+   - Frontend: http://localhost:3000
+   - Backend API: http://localhost:8000
+   - API Docs: http://localhost:8000/docs
 
----
+### Production Deployment
 
-## 🎨 Modology Brand
+#### Frontend (Cloudflare Pages)
+1. Connect GitHub repo to Cloudflare Pages
+2. Configure build settings:
+   - **Build command:** `cd frontend && npm run build`
+   - **Build output directory:** `frontend/.next`
+3. Set environment variables
+4. Deploy automatically on push to `main`
 
-This project is part of **Modology Studios** — a concept design studio making design accessible to everyone.
+#### Backend (Railway)
+1. Connect GitHub repo to Railway
+2. Configure:
+   - **Root directory:** `backend`
+   - **Build command:** `pip install -r requirements.txt`
+   - **Start command:** `uvicorn main:app --host 0.0.0.0 --port $PORT`
+3. Add PostgreSQL database service
+4. Add environment variables
+5. Deploy automatically on push to `main`
 
-- **Website**: https://www.modologystudios.com/
-- **Philosophy**: "Making Dreams Happen" — we handle complexity so clients can focus on their goals
-- **Services**: Interior Design, Digital Fabrication, CAD, Prototyping, Business Strategy, Ethnographic Research
+## 🧪 Testing
 
----
+### Backend Tests
+```bash
+cd backend
+pytest
+```
+
+### Frontend Tests
+```bash
+cd frontend
+npm test
+```
+
+## 📝 API Endpoints
+
+### Health
+- `GET /` - API info
+- `GET /health` - Health check
+- `GET /init-db` - Initialize database tables
+
+### Cabinets
+- `POST /api/cabinets` - Create cabinet
+- `GET /api/cabinets` - List all cabinets
+- `GET /api/cabinets/{id}` - Get cabinet by ID
+- `PUT /api/cabinets/{id}` - Update cabinet
+- `DELETE /api/cabinets/{id}` - Delete cabinet
+
+### Materials
+- `POST /api/materials` - Create material
+- `GET /api/materials` - List all materials
+- `GET /api/materials/{id}` - Get material by ID
+- `PUT /api/materials/{id}` - Update material
+- `DELETE /api/materials/{id}` - Delete material
+
+### Hardware
+- `POST /api/hardware` - Create hardware
+- `GET /api/hardware` - List all hardware
+- `GET /api/hardware/{id}` - Get hardware by ID
+- `DELETE /api/hardware/{id}` - Delete hardware
+
+## 🔐 Security
+
+- All endpoints use CORS configuration
+- Database connections use environment variables
+- Authentication via Clerk (frontend) and JWT (backend)
+- Input validation via Pydantic
+- SQL injection prevention via SQLAlchemy
+
+## 📈 Roadmap
+
+### Phase 1: MVP (Months 1-2)
+- [x] Set up GitHub repository
+- [x] Create database models and migrations
+- [x] Implement basic CRUD endpoints
+- [ ] Build cabinet builder UI
+- [ ] Implement 2D cut list generator
+- [ ] Add pricing calculator
+- [ ] Deploy to Cloudflare Pages + Railway
+
+### Phase 2: Advanced Features (Months 3-4)
+- [ ] 3D preview with Three.js
+- [ ] Waste optimization algorithm
+- [ ] CNC G-code export
+- [ ] Hardware finder with supplier integration
+- [ ] User accounts and authentication
+- [ ] Payment integration with Stripe
+
+### Phase 3: Launch & Growth (Month 5+)
+- [ ] Beta launch to 10 users
+- [ ] Collect feedback and iterate
+- [ ] Public launch
+- [ ] Marketing and content creation
+- [ ] Plan Phase 4 features
 
 ## 🤝 Contributing
 
-Contributions welcome! Please feel free to submit a Pull Request.
+This is currently a solo project, but contributions are welcome!
 
----
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
 
 ## 📄 License
 
-MIT License — feel free to use this project for your own cabinet design needs.
+MIT License - see LICENSE file for details
 
----
+## 👤 Author
 
-## 📞 Contact
+**Michael Flanigan** - Modology Studios
 
-**Michael Flanigan** — Founder, Modology Studios
-- GitHub: [@MJFlanigan5](https://github.com/MJFlanigan5)
-- Web: https://www.modologystudios.com/
+## 🔗 Links
 
----
+- [Modology Studios](https://www.modologystudios.com/)
+- [GitHub Repository](https://github.com/MJFlanigan5/modology-cabinet-designer)
 
-**Status**: 🚧 MVP in Development — Target launch: Q2 2025
+## 💬 Support
+
+For questions or issues, please open a GitHub issue.
