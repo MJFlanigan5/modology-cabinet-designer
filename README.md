@@ -1,6 +1,12 @@
-# Modology Cabinet Designer
+# KerfOS
+
+**Precision cabinet design for woodworkers and DIYers.**
 
 AI-powered cabinet design tool that makes professional fabrication accessible to everyone.
+
+> **Kerf** /kɜːrf/ — The width of material removed by a cut. A woodworker's most fundamental measurement.
+
+---
 
 ## 🎯 Vision
 
@@ -21,7 +27,7 @@ This project uses [Pencil.dev](https://pencil.dev) for AI-powered frontend desig
 ### How to Use Pencil.dev
 
 1. Sign up at https://pencil.dev
-2. Create a project called "Modology Cabinet Designer"
+2. Create a project called "KerfOS"
 3. Copy prompts from `design/PENCIL_DESIGN_SPECS.md`
 4. Paste into Pencil's AI prompt field
 5. Iterate on generated designs
@@ -239,7 +245,7 @@ This project uses [Pencil.dev](https://pencil.dev) for AI-powered frontend desig
 ## 📁 Project Structure
 
 ```
-modology-cabinet-designer/
+kerfos/
 ├── design/
 │   ├── PENCIL_DESIGN_SPECS.md    # Pencil.dev design specifications
 │   └── designs/                   # Exported design files
@@ -383,31 +389,31 @@ flyctl postgres create
 ### 2. Get Database Connection URL
 
 ```bash
-flyctl postgres connect -a modology-db --console
+flyctl postgres connect -a kerfos-db --console
 ```
 
 Or to get connection URL:
 
 ```bash
-flyctl status -a modology-db
+flyctl status -a kerfos-db
 ```
 
 You'll see something like:
 ```
 Host: xxx-a.db.fly.dev
 User: postgres
-Database: modology_db
+Database: kerfos_db
 ```
 
 **Format your DATABASE_URL:**
 ```
-postgresql://postgres:password@xxx-a.db.fly.dev:5432/modology_db
+postgresql://postgres:password@xxx-a.db.fly.dev:5432/kerfos_db
 ```
 
 ### 3. Attach Database to Backend App
 
 ```bash
-flyctl postgres attach -a modology-backend modology-db
+flyctl postgres attach -a kerfos-backend kerfos-db
 ```
 
 This will:
@@ -418,7 +424,7 @@ This will:
 ### 4. Update Secrets (if needed)
 
 ```bash
-flyctl secrets set DATABASE_URL="postgresql://postgres:password@xxx-a.db.fly.dev:5432/modology_db"
+flyctl secrets set DATABASE_URL="postgresql://postgres:password@xxx-a.db.fly.dev:5432/kerfos_db"
 ```
 
 ## 🔐 Environment Variables
@@ -440,7 +446,7 @@ flyctl secrets set DATABASE_URL="postgresql://postgres:password@xxx-a.db.fly.dev
 
 | Variable | Description |
 |---|---|
-| `NEXT_PUBLIC_API_URL` | Your Fly.io backend URL (e.g., `https://modology-backend.fly.dev`) |
+| `NEXT_PUBLIC_API_URL` | Your Fly.io backend URL (e.g., `https://kerfos-backend.fly.dev`) |
 | `NEXTAUTH_SECRET` | Random string for NextAuth (generate with `openssl rand -base64 32`) |
 | `NEXTAUTH_URL` | Your Vercel frontend URL |
 | `CLERK_PUBLISHABLE_KEY` | Clerk publishable key (from Clerk Dashboard) |
@@ -482,8 +488,8 @@ flyctl secrets set DATABASE_URL="postgresql://postgres:password@xxx-a.db.fly.dev
 #### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/MJFlanigan5/modology-cabinet-designer.git
-cd modology-cabinet-designer
+git clone https://github.com/MJFlanigan5/kerfos.git
+cd kerfos
 ```
 
 #### 2. Set Up Backend
@@ -499,7 +505,7 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 
 # Set DATABASE_URL
-export DATABASE_URL="postgresql://postgres:password@localhost:5432/modology_db"
+export DATABASE_URL="postgresql://postgres:password@localhost:5432/kerfos_db"
 
 # Initialize database
 python -m app.init_db
@@ -839,6 +845,7 @@ npm test
 ```
 ┌─────────────────────────────────────────┐
 │   Vercel (Frontend - Next.js)         │
+│   kerfos.com                           │
 │   - Cabinet Builder UI                 │
 │   - Hardware Finder                   │
 │   - 3D Preview                      │
@@ -871,6 +878,7 @@ npm test
                ▼
 ┌─────────────────────────────────────────┐
 │   Fly.io (Backend - FastAPI)           │
+│   api.kerfos.com                       │
 │   - FastAPI native support            │
 │   - Cabinets, Materials, Hardware APIs  │
 │   - Cut List Optimizer               │
@@ -1210,13 +1218,13 @@ MIT License - see LICENSE file for details.
 
 ## 👤 Author
 
-**Michael Flanigan** - Modology Studios
+**Michael Flanigan** - [KerfOS](https://kerfos.com)
 
 ## 🔗 Links
 
-- [Modology Studios](https://www.modologystudios.com/)
-- [GitHub Repository](https://github.com/MJFlanigan5/modology-cabinet-designer)
-- [Design Specifications](design/PENCIL_DESIGN_SPECS.md)
+- **Website:** https://kerfos.com
+- **GitHub Repository:** https://github.com/MJFlanigan5/kerfos
+- **Design Specifications:** [design/PENCIL_DESIGN_SPECS.md](design/PENCIL_DESIGN_SPECS.md)
 
 ## 💬 Support
 
