@@ -9,6 +9,7 @@ Includes routers for:
 - GCode (CNC export)
 - Chat (AI assistant)
 - Wizard (guided design)
+- Stripe (payments)
 """
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
@@ -16,7 +17,7 @@ from contextlib import asynccontextmanager
 from pydantic import BaseModel
 from typing import Dict, Any, Optional, List
 
-from app.routers import cabinets, materials, hardware, cutlists, auth, collaboration, projects, gcode
+from app.routers import cabinets, materials, hardware, cutlists, auth, collaboration, projects, gcode, stripe
 from app.database import engine, get_db
 from app.models import Base
 from app.gcode_generator import generate_gcode, GCodeConfig
@@ -46,6 +47,7 @@ API for AI-powered cabinet design tool with:
 - Project collaboration and sharing
 - AI chat assistant
 - Guided wizard mode
+- Stripe subscription payments
     """,
     version="1.0.0",
     lifespan=lifespan
@@ -84,7 +86,8 @@ async def root():
             "User authentication (JWT)",
             "Project collaboration and sharing",
             "AI chat assistant",
-            "Guided wizard mode"
+            "Guided wizard mode",
+            "Stripe subscription payments"
         ],
         "endpoints": {
             "cabinets": "/api/cabinets",
@@ -96,7 +99,8 @@ async def root():
             "collaboration": "/api/collaboration",
             "gcode": "/api/gcode",
             "chat": "/api/chat",
-            "wizard": "/api/wizard"
+            "wizard": "/api/wizard",
+            "stripe": "/api/stripe"
         }
     }
 
@@ -310,3 +314,4 @@ app.include_router(auth.router)
 app.include_router(collaboration.router)
 app.include_router(projects.router)
 app.include_router(gcode.router)
+app.include_router(stripe.router)
