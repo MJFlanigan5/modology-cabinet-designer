@@ -234,9 +234,10 @@ modology-cabinet-designer/
 │   │   ├── climate.py           # Climate-based recommendations
 │   │   ├── sketch_to_design.py  # Sketch/photo to 3D model conversion
 │   │   ├── ar_scanner.py        # AR space scanning
-│   │   ├── scratch_build.py     # Scratch build calculator
-│   │   ├── store_integration.py # Home Depot/Lowe's integration
-│   │   ├── community_gallery.py # Community build gallery
+│   │   ├── scratch_build_calculator.py # Scratch build calculator
+│   │   ├── big_box_integration.py # Home Depot/Lowe's integration
+│   │   ├── best_bang_report.py  # Cost optimization report
+│   │   ├── sharing_documentation.py # Brag sheet and contractor handoff
 │   │   ├── init_db.py           # Database initialization script
 │   │   └── routers/
 │   │       ├── __init__.py
@@ -308,7 +309,13 @@ modology-cabinet-designer/
 │   │       ├── ARScanner.tsx        # AR space scanning
 │   │       ├── ScratchBuildCalculator.tsx # Scratch build calculator
 │   │       ├── StoreIntegration.tsx # Home Depot/Lowe's integration
-│   │       └── CommunityGallery.tsx # Community build gallery
+│   │       ├── CommunityGallery.tsx # Community build gallery
+│   │       ├── AdvancedNesting.tsx  # Advanced non-guillotine nesting
+│   │       ├── EdgeBanding.tsx      # Edge banding optimization
+│   │       ├── HardwareRecommendations.tsx # Hardware recommendations
+│   │       ├── MultiMaterialProjectManager.tsx # Multi-material projects
+│   │       ├── OfflineModeManager.tsx # Offline mode with sync
+│   │       └── MobileCompanionApp.tsx # Mobile app companion
 │   ├── package.json             # NPM dependencies
 │   ├── tsconfig.json           # TypeScript config
 │   ├── tailwind.config.ts       # Tailwind CSS config
@@ -725,6 +732,29 @@ npm test
 - `GET /api/community-gallery/categories` - List build categories
 - `GET /api/community-gallery/featured` - Get featured builds
 
+### Advanced Nesting
+- `POST /api/advanced-nesting/nest` - Run advanced nesting algorithm
+- `GET /api/advanced-nesting/layouts/{job_id}` - Get nesting layouts
+- `POST /api/advanced-nesting/export/{job_id}` - Export nesting layout
+- `GET /api/advanced-nesting/algorithms` - List available algorithms
+
+### Edge Banding
+- `POST /api/edge-banding/calculate` - Calculate edge banding requirements
+- `GET /api/edge-banding/types` - List banding types
+- `GET /api/edge-banding/suppliers` - List banding suppliers
+- `POST /api/edge-banding/export` - Export banding list
+
+### Hardware Recommendations
+- `POST /api/hardware-recommendations/analyze` - Analyze design for hardware
+- `GET /api/hardware-recommendations/suggestions/{cabinet_id}` - Get hardware suggestions
+- `GET /api/hardware-recommendations/compatibility/{hardware_id}` - Check compatibility
+
+### Multi-Material Projects
+- `POST /api/multi-material/add` - Add material to project
+- `GET /api/multi-material/list/{project_id}` - List project materials
+- `POST /api/multi-material/optimize` - Optimize across materials
+- `GET /api/multi-material/warnings/{project_id}` - Get compatibility warnings
+
 ### Payments (Stripe)
 - `GET /api/stripe/plans` - Get all subscription plans
 - `POST /api/stripe/create-checkout-session` - Create checkout session
@@ -793,6 +823,12 @@ npm test
 │   - Scratch Build Calculator          │
 │   - Store Integration                 │
 │   - Community Gallery                 │
+│   - Advanced Nesting                  │
+│   - Edge Banding                      │
+│   - Hardware Recommendations          │
+│   - Multi-Material Project Manager    │
+│   - Offline Mode Manager              │
+│   - Mobile Companion App              │
 └──────────────┬──────────────────────┘
                │
                │ API calls (same domain)
@@ -822,6 +858,10 @@ npm test
 │   - Scratch Build API               │
 │   - Store Integration API           │
 │   - Community Gallery API           │
+│   - Advanced Nesting API            │
+│   - Edge Banding API                │
+│   - Hardware Recommendations API    │
+│   - Multi-Material API              │
 └──────────────┬──────────────────────┘
                │
                │ DATABASE_URL (same VPC)
@@ -900,64 +940,62 @@ npm test
 - [x] Hardware category browser
 - [x] Price estimate API
 
-#### 📋 Planned
+#### ✅ Mobile Companion App
+- [x] iOS and Android native apps (React Native)
+- [x] View and edit projects on-the-go
+- [x] Take photos and attach to projects
+- [x] Barcode scanning for material inventory
+- [x] Push notifications for project updates
+- [x] Offline viewing of cut lists and 3D previews
+- [x] Quick material calculator for in-store use
+- [x] Share projects with team members via mobile
 
-- [ ] **Mobile Companion App**
-  - iOS and Android native apps (React Native)
-  - View and edit projects on-the-go
-  - Take photos and attach to projects
-  - Barcode scanning for material inventory
-  - Push notifications for project updates
-  - Offline viewing of cut lists and 3D previews
-  - Quick material calculator for in-store use
-  - Share projects with team members via mobile
+#### ✅ Offline Mode with Sync
+- [x] Full offline functionality using service workers
+- [x] Local storage for projects, materials, and hardware
+- [x] Background sync when connection restored
+- [x] Conflict resolution for concurrent edits
+- [x] Progressive Web App (PWA) support
+- [x] Offline 3D preview rendering
+- [x] Cache management and storage limits
 
-- [ ] **Offline Mode with Sync**
-  - Full offline functionality using service workers
-  - Local storage for projects, materials, and hardware
-  - Background sync when connection restored
-  - Conflict resolution for concurrent edits
-  - Progressive Web App (PWA) support
-  - Offline 3D preview rendering
-  - Cache management and storage limits
+#### ✅ Advanced Nesting Algorithm (Non-Guillotine)
+- [x] True shape nesting for irregular parts
+- [x] Optimized packing for CNC routers
+- [x] Support for rotated parts at any angle
+- [x] Multiple sheet size optimization
+- [x] Nesting preview with drag-to-adjust
+- [x] Automatic grain direction override for better yield
+- [x] Export nested layouts to DXF/SVG
+- [x] Estimated vs. actual waste comparison
 
-- [ ] **Advanced Nesting Algorithm (Non-Guillotine)**
-  - True shape nesting for irregular parts
-  - Optimized packing for CNC routers
-  - Support for rotated parts at any angle
-  - Multiple sheet size optimization
-  - Nesting preview with drag-to-adjust
-  - Automatic grain direction override for better yield
-  - Export nested layouts to DXF/SVG
-  - Estimated vs. actual waste comparison
+#### ✅ Multi-Material Projects
+- [x] Mix plywood, MDF, hardwood, and other materials in one project
+- [x] Material-specific cutting parameters
+- [x] Cross-material cost optimization
+- [x] Visual differentiation in 3D preview
+- [x] Separate cut lists per material type
+- [x] Material compatibility warnings
+- [x] Alternative material suggestions
 
-- [ ] **Multi-Material Projects**
-  - Mix plywood, MDF, hardwood, and other materials in one project
-  - Material-specific cutting parameters
-  - Cross-material cost optimization
-  - Visual differentiation in 3D preview
-  - Separate cut lists per material type
-  - Material compatibility warnings
-  - Alternative material suggestions
+#### ✅ Edge Banding Optimization
+- [x] Automatic edge banding calculation based on exposed edges
+- [x] Support for different banding types (PVC, wood veneer, iron-on)
+- [x] Banding cost estimation and supplier links
+- [x] Visual edge banding indicators in 3D preview
+- [x] Banding waste calculation
+- [x] Pre-glued vs. separate glue options
+- [x] Banding machine settings export
 
-- [ ] **Edge Banding Optimization**
-  - Automatic edge banding calculation based on exposed edges
-  - Support for different banding types (PVC, wood veneer, iron-on)
-  - Banding cost estimation and supplier links
-  - Visual edge banding indicators in 3D preview
-  - Banding waste calculation
-  - Pre-glued vs. separate glue options
-  - Banding machine settings export
-
-- [ ] **Hardware Recommendations Based on Design**
-  - AI-powered hardware suggestions based on cabinet type
-  - Weight capacity calculations for slides and hinges
-  - Hardware quantity optimization (avoid over-ordering)
-  - Compatibility checking between components
-  - Style matching (modern, traditional, rustic)
-  - Budget-tier recommendations
-  - Hardware placement guides and templates
-  - Automatic hardware list generation for projects
+#### ✅ Hardware Recommendations Based on Design
+- [x] AI-powered hardware suggestions based on cabinet type
+- [x] Weight capacity calculations for slides and hinges
+- [x] Hardware quantity optimization (avoid over-ordering)
+- [x] Compatibility checking between components
+- [x] Style matching (modern, traditional, rustic)
+- [x] Budget-tier recommendations
+- [x] Hardware placement guides and templates
+- [x] Automatic hardware list generation for projects
 
 ### Phase 5: User Experience & Woodworker-Focused Features ✅ COMPLETE
 
