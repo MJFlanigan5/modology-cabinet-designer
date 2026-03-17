@@ -1,4 +1,4 @@
-# Modology Cabinet Designer - Pencil.dev Design Specifications
+# KerfOS - Pencil.dev Design Specifications
 
 This document contains design prompts and specifications for generating frontend designs using [Pencil.dev](https://pencil.dev).
 
@@ -40,7 +40,7 @@ Monospace: JetBrains Mono (Measurements, Code)
 
 **Pencil Prompt:**
 ```
-Create a modern dashboard for a cabinet design app targeting woodworkers and DIY enthusiasts. 
+Create a modern dashboard for KerfOS - a cabinet design app targeting woodworkers and DIY enthusiasts. 
 
 Layout:
 - Top navigation bar with logo, search, notifications, and user avatar
@@ -65,7 +65,7 @@ Mobile: Responsive sidebar that collapses to hamburger menu
 
 **Pencil Prompt:**
 ```
-Design a professional cabinet builder workspace for DIY woodworkers.
+Design a professional cabinet builder workspace for KerfOS - DIY woodworkers.
 
 Layout (Desktop):
 - Left sidebar (300px): Component palette
@@ -105,7 +105,7 @@ Features:
 
 **Mobile Version Prompt:**
 ```
-Design a mobile cabinet builder interface for tablets and phones.
+Design a mobile cabinet builder interface for KerfOS on tablets and phones.
 
 Layout:
 - Top bar: Back button, project name, save status, more menu
@@ -137,7 +137,7 @@ Export Tab:
 
 **Pencil Prompt:**
 ```
-Design a template gallery for pre-built cabinet configurations.
+Design a template gallery for KerfOS - pre-built cabinet configurations.
 
 Layout:
 - Top search and filter bar
@@ -172,7 +172,7 @@ Empty state: "No templates match your filters" with clear filters button
 
 **Pencil Prompt:**
 ```
-Design a hardware finder interface for cabinet hardware shopping.
+Design a hardware finder interface for KerfOS - cabinet hardware shopping.
 
 Layout:
 - Left sidebar (280px):
@@ -218,7 +218,7 @@ Suppliers: Show supplier logos (Rockler, Home Depot, Lowe's, etc.)
 
 **Pencil Prompt:**
 ```
-Design a cut list generation and export interface.
+Design a cut list generation and export interface for KerfOS.
 
 Layout:
 - Top section: Project summary
@@ -263,7 +263,7 @@ Exports: Clear icon buttons with format labels
 
 **Pencil Prompt:**
 ```
-Design a local supplier finder interface for woodworking materials.
+Design a local supplier finder interface for KerfOS - woodworking materials.
 
 Layout:
 - Top section: Location input
@@ -311,7 +311,7 @@ Mobile: Swipeable store cards with bottom sheet details
 
 **Pencil Prompt:**
 ```
-Design a design analysis interface that checks for common mistakes.
+Design a design analysis interface for KerfOS that checks for common mistakes.
 
 Layout:
 - Left panel: Issue list
@@ -359,7 +359,7 @@ Auto-fix: Show before/after preview
 
 **Pencil Prompt:**
 ```
-Design a cost optimization report interface.
+Design a cost optimization report interface for KerfOS.
 
 Layout:
 - Top summary card:
@@ -404,7 +404,7 @@ Suggestions: Cards with clear accept/reject actions
 
 **Pencil Prompt:**
 ```
-Design a community showcase gallery for completed projects.
+Design a community showcase gallery for KerfOS - completed projects.
 
 Layout:
 - Hero section:
@@ -455,7 +455,7 @@ Engagement: Clear like/comment/share actions
 
 **Pencil Prompt:**
 ```
-Design a social media share generator for completed projects.
+Design a social media share generator for KerfOS - completed projects.
 
 Layout:
 - Left panel: Project selection
@@ -503,7 +503,7 @@ Templates: Professional, shareable designs
 
 **Pencil Prompt:**
 ```
-Design a mobile companion app for cabinet builders in the workshop.
+Design a mobile companion app for KerfOS - cabinet builders in the workshop.
 
 Home Screen:
 - Top: Greeting with user name, today's projects
@@ -558,7 +558,7 @@ Offline: Clear indicator when offline
 
 **Sign Up Prompt:**
 ```
-Design a sign up page for cabinet design app.
+Design a sign up page for KerfOS - cabinet design app.
 
 Layout:
 - Left side (desktop only): Hero image of beautiful finished cabinets
@@ -584,7 +584,7 @@ Trust signals: Security badges, testimonials snippet
 
 **Sign In Prompt:**
 ```
-Design a sign in page.
+Design a sign in page for KerfOS.
 
 Layout:
 - Similar structure to sign up
@@ -606,7 +606,7 @@ Error states:
 
 **Pencil Prompt:**
 ```
-Design a pricing page for SaaS cabinet design tool.
+Design a pricing page for KerfOS - SaaS cabinet design tool.
 
 Layout:
 - Top section:
@@ -655,7 +655,7 @@ CTAs: Clear hierarchy between primary and secondary buttons
 
 **Pencil Prompt:**
 ```
-Design a settings page for user preferences.
+Design a settings page for KerfOS - user preferences.
 
 Layout:
 - Left sidebar navigation:
@@ -702,7 +702,7 @@ Actions: Destructive actions in red with confirmation
 
 **Pencil Prompt:**
 ```
-Design a button component system for cabinet design app.
+Design a button component system for KerfOS.
 
 Button variants:
 1. Primary (filled blue): Main actions like "Save", "Export", "Create"
@@ -730,7 +730,7 @@ Include:
 
 **Pencil Prompt:**
 ```
-Design form input components.
+Design form input components for KerfOS.
 
 Input types:
 1. Text input (single line)
@@ -761,7 +761,7 @@ Features:
 
 **Pencil Prompt:**
 ```
-Design card component system.
+Design card component system for KerfOS.
 
 Card types:
 1. Project card (thumbnail, title, stats)
@@ -789,7 +789,7 @@ Features:
 
 **Pencil Prompt:**
 ```
-Design navigation components.
+Design navigation components for KerfOS.
 
 1. Top navigation bar:
    - Logo (left)
@@ -826,7 +826,7 @@ Design navigation components.
 
 **Pencil Prompt:**
 ```
-Design modal component system.
+Design modal component system for KerfOS.
 
 Modal types:
 1. Alert/Confirm (simple message, OK/Cancel)
@@ -854,7 +854,7 @@ Features:
 
 **Pencil Prompt:**
 ```
-Design data display components.
+Design data display components for KerfOS.
 
 1. Tables:
    - Sortable columns
@@ -893,7 +893,7 @@ Design data display components.
 
 **Pencil Prompt:**
 ```
-Design feedback components.
+Design feedback components for KerfOS.
 
 1. Toast notifications:
    - Success (green)
@@ -1007,7 +1007,7 @@ Design feedback components.
 ## 🚀 How to Use with Pencil.dev
 
 1. **Sign up for Pencil.dev** at https://pencil.dev
-2. **Create a new project** called "Modology Cabinet Designer"
+2. **Create a new project** called "KerfOS"
 3. **Copy the prompts** from this document
 4. **Paste into Pencil's AI prompt** field
 5. **Iterate** on generated designs with follow-up prompts
