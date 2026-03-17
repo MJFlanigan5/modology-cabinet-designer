@@ -1,11 +1,10 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
-from app.routers import cabinets, materials, hardware
-from app.database import engine
+from app.routers import cabinets, materials, hardware, cutlists
+from app.database import engine, get_db
 from app.models import Base
-
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -14,7 +13,6 @@ async def lifespan(app: FastAPI):
     yield
     # Shutdown
     pass
-
 
 app = FastAPI(
     title="Modology Cabinet Designer API",
@@ -30,13 +28,13 @@ app.add_middleware(
         "http://localhost:3000",
         "http://localhost:4173",
         "https://modologystudios.com",
-        "*.pages.dev"  # Cloudflare Pages preview URLs
+        "*.pages.dev",  # Cloudflare Pages preview URLs
+        "*.onrender.com"  # Render backend
     ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 
 @app.get("/")
 async def root():
@@ -46,11 +44,9 @@ async def root():
         "status": "running"
     }
 
-
 @app.get("/health")
 async def health():
     return {"status": "healthy"}
-
 
 @app.get("/init-db")
 async def init_database():
@@ -69,8 +65,8 @@ async def init_database():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-
 # Include routers
 app.include_router(cabinets.router)
 app.include_router(materials.router)
 app.include_router(hardware.router)
+app.include_router(cutlists.router)
