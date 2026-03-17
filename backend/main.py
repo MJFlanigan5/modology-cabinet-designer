@@ -1,6 +1,14 @@
 """Main FastAPI application for Modology Cabinet Designer
 
-Includes routers for cabinets, materials, hardware, cut lists, exports, chat, and wizard.
+Includes routers for:
+- Cabinets, Materials, Hardware (core cabinet design)
+- Cut Lists (optimization)
+- Auth (user authentication)
+- Collaboration (project sharing)
+- Projects (project management)
+- GCode (CNC export)
+- Chat (AI assistant)
+- Wizard (guided design)
 """
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
@@ -8,7 +16,7 @@ from contextlib import asynccontextmanager
 from pydantic import BaseModel
 from typing import Dict, Any, Optional, List
 
-from app.routers import cabinets, materials, hardware, cutlists
+from app.routers import cabinets, materials, hardware, cutlists, auth, collaboration, projects, gcode
 from app.database import engine, get_db
 from app.models import Base
 from app.gcode_generator import generate_gcode, GCodeConfig
@@ -26,8 +34,20 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="Modology Cabinet Designer API",
-    description="API for AI-powered cabinet design tool with 3D export, chat, and wizard capabilities",
-    version="0.2.0",
+    description="""
+API for AI-powered cabinet design tool with:
+- Cabinet design and management
+- Material selection and pricing
+- Hardware inventory
+- Cut list optimization with waste reduction
+- CNC G-code export (GRBL, ShopBot, Shapeoko, X-Carve)
+- 3D exports (OBJ, STL, 3MF, DXF)
+- User authentication
+- Project collaboration and sharing
+- AI chat assistant
+- Guided wizard mode
+    """,
+    version="1.0.0",
     lifespan=lifespan
 )
 
@@ -52,23 +72,37 @@ app.add_middleware(
 async def root():
     return {
         "message": "Modology Cabinet Designer API",
-        "version": "0.2.0",
+        "version": "1.0.0",
         "status": "running",
         "features": [
             "Cabinet design and management",
             "Material selection and pricing",
             "Hardware inventory",
             "Cut list optimization",
-            "G-code generation",
+            "G-code generation (GRBL, ShopBot, Shapeoko, X-Carve)",
             "3D exports (OBJ, STL, 3MF, DXF)",
+            "User authentication (JWT)",
+            "Project collaboration and sharing",
             "AI chat assistant",
             "Guided wizard mode"
-        ]
+        ],
+        "endpoints": {
+            "cabinets": "/api/cabinets",
+            "materials": "/api/materials",
+            "hardware": "/api/hardware",
+            "cutlists": "/api/cutlists",
+            "auth": "/api/auth",
+            "projects": "/api/projects",
+            "collaboration": "/api/collaboration",
+            "gcode": "/api/gcode",
+            "chat": "/api/chat",
+            "wizard": "/api/wizard"
+        }
     }
 
 @app.get("/health")
 async def health():
-    return {"status": "healthy", "version": "0.2.0"}
+    return {"status": "healthy", "version": "1.0.0"}
 
 @app.get("/init-db")
 async def init_database():
@@ -267,8 +301,12 @@ async def export_endpoint(format: str, cabinet_data: Dict[str, Any]):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Export failed: {str(e)}")
 
-# Include routers
+# Include all routers
 app.include_router(cabinets.router)
 app.include_router(materials.router)
 app.include_router(hardware.router)
 app.include_router(cutlists.router)
+app.include_router(auth.router)
+app.include_router(collaboration.router)
+app.include_router(projects.router)
+app.include_router(gcode.router)
