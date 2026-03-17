@@ -80,6 +80,9 @@ Make professional cabinet fabrication accessible to DIYers and small shops by au
 - **McMaster-Carr** - https://www.mcmaster.com
 - **Woodworker Express** - https://www.woodworkerexpress.com
 - **DK Hardware** - https://www.dkhardware.com
+- **CabinetParts.com** - https://www.cabinetparts.com
+- **Woodworker's Hardware** - https://www.wwhardware.com
+- **Hardware Tree** - https://www.hardwaretree.com
 
 **Hardware Types**:
 - Hinges (concealed, European, butt, piano, pivot, soft-close)
@@ -200,6 +203,7 @@ modology-cabinet-designer/
 │   │   ├── advanced_nesting.py  # Non-guillotine nesting algorithms
 │   │   ├── edge_banding.py      # Edge banding optimization
 │   │   ├── hardware_recommendations.py # Design-based hardware suggestions
+│   │   ├── localization.py      # Local supplier search by zip code
 │   │   ├── init_db.py           # Database initialization script
 │   │   └── routers/
 │   │       ├── __init__.py
@@ -216,6 +220,7 @@ modology-cabinet-designer/
 │   │       ├── advanced_nesting.py # Advanced nesting endpoints
 │   │       ├── edge_banding.py  # Edge banding endpoints
 │   │       ├── hardware_recommendations.py # Hardware recommendation endpoints
+│   │       ├── localization.py  # Local supplier search API
 │   │       └── scrap.py         # Scrap tracker endpoints
 │   ├── main.py                 # FastAPI application
 │   ├── requirements.txt         # Python dependencies
@@ -243,7 +248,8 @@ modology-cabinet-designer/
 │   │       ├── DesignAssistant.tsx  # AI-powered design helper
 │   │       ├── DesignExporter.tsx   # 3D model exports
 │   │       ├── TemplateGallery.tsx  # Project templates browser
-│   │       └── ScrapTracker.tsx     # Leftover piece tracker
+│   │       ├── ScrapTracker.tsx     # Leftover piece tracker
+│   │       └── Localization.tsx     # Local supplier finder by zip code
 │   ├── package.json             # NPM dependencies
 │   ├── tsconfig.json           # TypeScript config
 │   ├── tailwind.config.ts       # Tailwind CSS config
@@ -573,6 +579,14 @@ npm test
 - `GET /api/price-feeds/estimates/{hardware_type}/{subcategory}` - Get specific price estimate
 - `GET /api/price-feeds/hardware-categories` - Get hardware categories
 
+### Localization
+- `GET /api/localization/suppliers/{zip_code}` - Find local suppliers near zip code
+- `GET /api/localization/price-comparison/{zip_code}` - Compare prices across local and online suppliers
+- `GET /api/localization/search-links` - Generate direct search links for suppliers
+- `GET /api/localization/inventory/{zip_code}/{supplier_key}` - Check local inventory status
+- `GET /api/localization/categories` - List all supplier categories
+- `GET /api/localization/store-types` - List all store types
+
 ### Payments (Stripe)
 - `GET /api/stripe/plans` - Get all subscription plans
 - `POST /api/stripe/create-checkout-session` - Create checkout session
@@ -627,6 +641,7 @@ npm test
 │   - Cut List Exporter (PDF/CSV/DXF/G-code)│
 │   - Template Gallery                  │
 │   - Scrap Tracker                     │
+│   - Localization Finder               │
 └──────────────┬──────────────────────┘
                │
                │ API calls (same domain)
@@ -642,6 +657,7 @@ npm test
 │   - Templates API                   │
 │   - Price Feeds API                 │
 │   - Scrap Tracker API               │
+│   - Localization API                │
 └──────────────┬──────────────────────┘
                │
                │ DATABASE_URL (same VPC)
@@ -801,6 +817,18 @@ npm test
   - Format display for both systems
   - Seamless switching without re-entering values
   - Supports feet, inches, mm, cm, and meters
+
+- [x] **Localization (Local Supplier Finder)**
+  - Search for suppliers by zip code
+  - Find nearby stores with distances
+  - Filter by category (plywood, hardware, tools, etc.)
+  - Filter by store type (big box, specialty, lumber yard, online)
+  - Price tier indicators (budget, mid, premium)
+  - In-stock probability estimates
+  - Direct links to store websites and search pages
+  - Price comparison across local and online suppliers
+  - Personalized recommendations based on location
+  - Quick links to popular suppliers
 
 #### 📋 Planned
 
