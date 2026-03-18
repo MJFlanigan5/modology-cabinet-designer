@@ -1,0 +1,30 @@
+# ============================================
+# SECURITY.TXT - KERFOS
+# ============================================
+# Follows RFC 9116 (https://www.rfc-editor.org/rfc/rfc9116)
+# Location: https://kerfos.com/.well-known/security.txt
+
+# Contact information for security issues
+Contact: security@kerfos.com
+Contact: https://kerfos.com/security
+
+# Preferred language for security reports
+Preferred-Languages: en
+
+# Canonical URI for this security.txt file
+Canonical: https://kerfos.com/.well-known/security.txt
+
+# Security policy URL
+Policy: https://kerfos.com/security
+
+# HIRING
+Hiring: https://kerfos.com/careers
+
+# GPG Key for encrypted reports (coming soon)
+# Encryption: https://kerfos.com/.well-known/pgp-key.txt
+
+# Acknowledgments
+Acknowledgments: https://kerfos.com/security/hall-of-fame
+
+# Expires (update annually)
+Expires: 2027-03-17T23:59:00.000Z
