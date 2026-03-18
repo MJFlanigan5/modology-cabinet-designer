@@ -1,18 +1,12 @@
+import type { Metadata } from 'next'
+import { Inter } from 'next/font/google'
 import './globals.css'
-import { ClerkProvider } from '@clerk/nextjs'
-import Navigation from '@/components/Navigation'
 
-export const metadata = {
-  title: 'KerfOS - Precision Cabinet Design',
-  description: 'AI-powered cabinet design tool for woodworkers and DIYers. Design, optimize, and build with confidence.',
-  keywords: 'cabinet design, woodworking, cut list, CNC, G-code, DIY, furniture design',
-  authors: [{ name: 'KerfOS' }],
-  openGraph: {
-    title: 'KerfOS - Precision Cabinet Design',
-    description: 'AI-powered cabinet design tool for woodworkers and DIYers.',
-    type: 'website',
-    url: 'https://kerfos.com',
-  },
+const inter = Inter({ subsets: ['latin'] })
+
+export const metadata: Metadata = {
+  title: 'KerfOS - Cabinet Designer',
+  description: 'AI-powered cabinet design tool for woodworkers and DIYers',
 }
 
 export default function RootLayout({
@@ -21,13 +15,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <ClerkProvider>
-      <html lang="en">
-        <body className="bg-gray-50">
-          <Navigation />
-          {children}
-        </body>
-      </html>
-    </ClerkProvider>
+    <html lang="en">
+      <body className={inter.className}>{children}</body>
+    </html>
   )
 }
