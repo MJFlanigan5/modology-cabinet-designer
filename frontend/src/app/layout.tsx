@@ -1,9 +1,18 @@
 import './globals.css'
 import { ClerkProvider } from '@clerk/nextjs'
+import Navigation from '@/components/Navigation'
 
 export const metadata = {
-  title: 'Modology Cabinet Designer',
-  description: 'AI-powered cabinet design tool with cut list generation and hardware sourcing.',
+  title: 'KerfOS - Precision Cabinet Design',
+  description: 'AI-powered cabinet design tool for woodworkers and DIYers. Design, optimize, and build with confidence.',
+  keywords: 'cabinet design, woodworking, cut list, CNC, G-code, DIY, furniture design',
+  authors: [{ name: 'KerfOS' }],
+  openGraph: {
+    title: 'KerfOS - Precision Cabinet Design',
+    description: 'AI-powered cabinet design tool for woodworkers and DIYers.',
+    type: 'website',
+    url: 'https://kerfos.com',
+  },
 }
 
 export default function RootLayout({
@@ -14,7 +23,10 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body>{children}</body>
+        <body className="bg-gray-50">
+          <Navigation />
+          {children}
+        </body>
       </html>
     </ClerkProvider>
   )
