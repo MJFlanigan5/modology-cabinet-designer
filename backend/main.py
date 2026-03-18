@@ -1,416 +1,284 @@
-"""Main FastAPI application for KerfOS
+# FastAPI Backend for KerfOS Cabinet Designer
 
-Includes routers for:
-- Cabinets, Materials, Hardware (core cabinet design)
-- Cut Lists (optimization)
-- Auth (user authentication)
-- Collaboration (project sharing)
-- Projects (project management)
-- GCode (CNC export)
-- Chat (AI assistant)
-- Wizard (guided design)
-- Stripe (payments)
-- Templates (project templates)
-- Price Feeds (live supplier pricing)
-- Advanced Nesting (non-guillotine algorithms)
-- Edge Banding (edge banding optimization)
-- Hardware Recommendations (design-based suggestions)
-- Scrap Tracker (leftover piece tracking)
-- AR Scanner (room measurement)
-- Sketch to Design (image import)
-- Scratch Build Calculator (time estimates)
-- Localization (local supplier finder)
-- Community Gallery (shared projects)
-- Store Integration (Home Depot/Lowe's)
-- GDPR (compliance)
-"""
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from contextlib import asynccontextmanager
 from pydantic import BaseModel
-from typing import Dict, Any, Optional, List
-
-from app.routers import (
-    cabinets, materials, hardware, cutlists, auth, collaboration,
-    projects, gcode, stripe, price_feeds, advanced_nesting,
-    edge_banding, hardware_recommendations, scrap, gdpr,
-    ar_scanner, community_gallery, localization, scratch_build,
-    sketch_to_design, store_integration
-)
-from app.templates import router as templates_router
-from app.database import engine, get_db
-from app.models import Base
-from app.gcode_generator import generate_gcode, GCodeConfig
-from app.exporters import export_cabinet, MaterialInfo
-from app.chat import ChatRequest, ChatResponse, call_llm, generate_conversation_id
-from app.wizard import WizardRequest, WizardResponse, start_wizard, update_wizard_state, generate_cabinet_summary
-from app.security import (
-    SecurityMiddleware, InputValidationMiddleware, RequestLoggingMiddleware
-)
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    # Startup: Create database tables
-    Base.metadata.create_all(bind=engine)
-    yield
-    # Shutdown
-    pass
+from typing import List, Optional
+import os
+from datetime import datetime
+import json
 
 app = FastAPI(
     title="KerfOS API",
-    description="""
-API for AI-powered cabinet design tool with:
-- Cabinet design and management
-- Material selection and pricing
-- Hardware inventory
-- Cut list optimization with waste reduction
-- CNC G-code export (GRBL, ShopBot, Shapeoko, X-Carve)
-- 3D exports (OBJ, STL, 3MF, DXF)
-- User authentication
-- Project collaboration and sharing
-- AI chat assistant
-- Guided wizard mode
-- Stripe subscription payments
-- Project templates (kitchen, vanity, bookshelf)
-- Live supplier price feeds
-- Advanced nesting algorithms
-- Edge banding optimization
-- Hardware recommendations
-- Scrap tracking and suggestions
-- AR room scanner
-- Sketch-to-design import
-- Scratch build calculator
-- Localization (local supplier finder)
-- Community gallery
-- Store integration (Home Depot/Lowe's)
-- GDPR compliance (data export, deletion, consent management)
-- Security (rate limiting, CSRF, input validation)
-    """,
-    version="3.0.0",
-    lifespan=lifespan
+    description="Backend API for KerfOS Cabinet Designer",
+    version="1.0.0"
 )
 
-# Add Security Middlewares (order matters - last added is first executed)
-app.add_middleware(RequestLoggingMiddleware)
-app.add_middleware(InputValidationMiddleware)
-app.add_middleware(SecurityMiddleware)
-
-# CORS - Allow Vercel, Fly.io, and local development
+# CORS configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://localhost:4173",
-        "https://kerfos.com",
-        "https://www.kerfos.com",
-        "*.vercel.app",  # Vercel frontend
-        "*.fly.dev",   # Fly.io backend
-        "*.onrender.com",  # Render backend (if used)
-        "*.pages.dev",  # Cloudflare Pages preview (if used)
-    ],
+    allow_origins=["*"],  # In production, replace with your frontend URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+# Models
+class Cabinet(BaseModel):
+    id: Optional[int] = None
+    name: str
+    width: float
+    height: float
+    depth: float
+    material: str
+    created_at: Optional[datetime] = None
+
+class Project(BaseModel):
+    id: Optional[int] = None
+    name: str
+    description: Optional[str] = None
+    cabinets: List[Cabinet] = []
+    created_at: Optional[datetime] = None
+
+class Material(BaseModel):
+    id: Optional[int] = None
+    name: str
+    type: str  # plywood, mdf, hardwood
+    thickness: float
+    price_per_sheet: float
+    sheet_width: float = 48.0  # inches
+    sheet_height: float = 96.0  # inches
+
+# In-memory storage (replace with database in production)
+cabinets_db = []
+projects_db = []
+materials_db = []
+
+# Initialize with sample data
+def init_sample_data():
+    # Sample materials
+    materials_db.extend([
+        Material(
+            id=1,
+            name="Birch Plywood",
+            type="plywood",
+            thickness=0.75,
+            price_per_sheet=65.99
+        ),
+        Material(
+            id=2,
+            name="MDF",
+            type="mdf",
+            thickness=0.75,
+            price_per_sheet=42.50
+        ),
+        Material(
+            id=3,
+            name="Oak Hardwood",
+            type="hardwood",
+            thickness=0.75,
+            price_per_sheet=89.99
+        )
+    ])
+    
+    # Sample cabinets
+    cabinets_db.extend([
+        Cabinet(
+            id=1,
+            name="Base Cabinet",
+            width=36.0,
+            height=34.5,
+            depth=24.0,
+            material="Birch Plywood",
+            created_at=datetime.now()
+        ),
+        Cabinet(
+            id=2,
+            name="Wall Cabinet",
+            width=30.0,
+            height=30.0,
+            depth=12.0,
+            material="Birch Plywood",
+            created_at=datetime.now()
+        )
+    ])
+    
+    # Sample project
+    projects_db.append(
+        Project(
+            id=1,
+            name="Kitchen Remodel",
+            description="Complete kitchen cabinet set",
+            cabinets=cabinets_db.copy(),
+            created_at=datetime.now()
+        )
+    )
+
+# Initialize sample data on startup
+init_sample_data()
+
+# Health check
 @app.get("/")
 async def root():
     return {
         "message": "KerfOS API",
-        "version": "3.0.0",
-        "status": "running",
-        "features": [
-            "Cabinet design and management",
-            "Material selection and pricing",
-            "Hardware inventory",
-            "Cut list optimization",
-            "G-code generation (GRBL, ShopBot, Shapeoko, X-Carve)",
-            "3D exports (OBJ, STL, 3MF, DXF)",
-            "User authentication (JWT)",
-            "Project collaboration and sharing",
-            "AI chat assistant",
-            "Guided wizard mode",
-            "Stripe subscription payments",
-            "Project templates (kitchen, vanity, bookshelf)",
-            "Live supplier price feeds",
-            "Advanced nesting algorithms",
-            "Edge banding optimization",
-            "Hardware recommendations",
-            "Scrap tracking and suggestions",
-            "AR room scanner",
-            "Sketch-to-design import",
-            "Scratch build calculator",
-            "Localization (local supplier finder)",
-            "Community gallery",
-            "Store integration (Home Depot/Lowe's)",
-            "GDPR compliance (data export, deletion, consent)",
-            "Security (rate limiting, CSRF, input validation)"
-        ],
-        "endpoints": {
-            "cabinets": "/api/cabinets",
-            "materials": "/api/materials",
-            "hardware": "/api/hardware",
-            "cutlists": "/api/cutlists",
-            "auth": "/api/auth",
-            "projects": "/api/projects",
-            "collaboration": "/api/collaboration",
-            "gcode": "/api/gcode",
-            "chat": "/api/chat",
-            "wizard": "/api/wizard",
-            "stripe": "/api/stripe",
-            "templates": "/api/templates",
-            "price_feeds": "/api/price-feeds",
-            "advanced_nesting": "/api/advanced-nesting",
-            "edge_banding": "/api/edge-banding",
-            "hardware_recommendations": "/api/hardware-recommendations",
-            "scrap": "/api/scrap",
-            "ar_scanner": "/api/ar-scanner",
-            "sketch_to_design": "/api/sketch-to-design",
-            "scratch_build": "/api/scratch-build",
-            "localization": "/api/localization",
-            "community_gallery": "/api/community-gallery",
-            "store_integration": "/api/store-integration",
-            "gdpr": "/api/gdpr"
-        }
+        "version": "1.0.0",
+        "docs": "/docs",
+        "health": "/health"
     }
 
 @app.get("/health")
 async def health():
-    return {"status": "healthy", "version": "3.0.0"}
+    return {"status": "healthy", "timestamp": datetime.now()}
 
 @app.get("/init-db")
-async def init_database():
-    """
-    Initialize database tables.
-    This endpoint can be used to manually trigger table creation.
-    """
-    try:
-        Base.metadata.create_all(bind=engine)
-        tables = list(Base.metadata.tables.keys())
-        return {
-            "status": "success",
-            "message": "Database tables created/verified",
-            "tables": tables
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+async def init_db():
+    """Initialize database with sample data"""
+    init_sample_data()
+    return {"message": "Database initialized with sample data"}
 
-# Chat endpoint
-@app.post("/api/chat", response_model=ChatResponse)
-async def chat_endpoint(request: ChatRequest):
-    """
-    AI chat endpoint for cabinet design assistance.
+# Cabinet endpoints
+@app.get("/api/cabinets", response_model=List[Cabinet])
+async def get_cabinets():
+    return cabinets_db
+
+@app.get("/api/cabinets/{cabinet_id}", response_model=Cabinet)
+async def get_cabinet(cabinet_id: int):
+    for cabinet in cabinets_db:
+        if cabinet.id == cabinet_id:
+            return cabinet
+    raise HTTPException(status_code=404, detail="Cabinet not found")
+
+@app.post("/api/cabinets", response_model=Cabinet)
+async def create_cabinet(cabinet: Cabinet):
+    cabinet.id = len(cabinets_db) + 1
+    cabinet.created_at = datetime.now()
+    cabinets_db.append(cabinet)
+    return cabinet
+
+@app.put("/api/cabinets/{cabinet_id}", response_model=Cabinet)
+async def update_cabinet(cabinet_id: int, cabinet_update: Cabinet):
+    for i, cabinet in enumerate(cabinets_db):
+        if cabinet.id == cabinet_id:
+            cabinet_update.id = cabinet_id
+            cabinet_update.created_at = cabinet.created_at
+            cabinets_db[i] = cabinet_update
+            return cabinet_update
+    raise HTTPException(status_code=404, detail="Cabinet not found")
+
+@app.delete("/api/cabinets/{cabinet_id}")
+async def delete_cabinet(cabinet_id: int):
+    for i, cabinet in enumerate(cabinets_db):
+        if cabinet.id == cabinet_id:
+            cabinets_db.pop(i)
+            return {"message": "Cabinet deleted"}
+    raise HTTPException(status_code=404, detail="Cabinet not found")
+
+# Project endpoints
+@app.get("/api/projects", response_model=List[Project])
+async def get_projects():
+    return projects_db
+
+@app.get("/api/projects/{project_id}", response_model=Project)
+async def get_project(project_id: int):
+    for project in projects_db:
+        if project.id == project_id:
+            return project
+    raise HTTPException(status_code=404, detail="Project not found")
+
+@app.post("/api/projects", response_model=Project)
+async def create_project(project: Project):
+    project.id = len(projects_db) + 1
+    project.created_at = datetime.now()
+    projects_db.append(project)
+    return project
+
+# Material endpoints
+@app.get("/api/materials", response_model=List[Material])
+async def get_materials():
+    return materials_db
+
+@app.get("/api/materials/{material_id}", response_model=Material)
+async def get_material(material_id: int):
+    for material in materials_db:
+        if material.id == material_id:
+            return material
+    raise HTTPException(status_code=404, detail="Material not found")
+
+# Cut list calculation
+@app.post("/api/cutlists/generate")
+async def generate_cut_list(cabinet: Cabinet):
+    """Generate a simple cut list for a cabinet"""
+    # Basic cut list calculation
+    # In a real implementation, this would use the 2D bin packing algorithm
+    cuts = []
     
-    Supports both free-form chat and wizard-guided flows.
-    """
-    try:
-        # Generate conversation ID if not provided
-        conversation_id = request.conversation_id or generate_conversation_id()
-        
-        # Build context from request
-        context = request.context or {}
-        
-        # Add current cabinet count to context
-        context["cabinet_count"] = context.get("cabinet_count", 0)
-        
-        # Call LLM
-        from app.chat import ChatMessage
-        messages = [ChatMessage(role="system", content="You are a helpful cabinet designer assistant.")]
-        if request.message:
-            messages.append(ChatMessage(role="user", content=request.message))
-        
-        response_text = await call_llm(messages, context)
-        
-        # Parse suggested actions
-        from app.chat import parse_suggested_actions, extract_cabinet_commands
-        suggested_actions = parse_suggested_actions(response_text)
-        cabinet_commands = extract_cabinet_commands(response_text)
-        
-        return ChatResponse(
-            message=response_text,
-            conversation_id=conversation_id,
-            suggested_actions=suggested_actions,
-            wizard_next_step=None  # Will be filled by wizard if active
-        )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Chat failed: {str(e)}")
-
-# Wizard endpoints
-@app.post("/api/wizard/start")
-async def start_wizard_endpoint():
-    """
-    Start a new wizard session for guided cabinet design.
-    """
-    state = start_wizard(generate_conversation_id())
-    return WizardResponse(
-        current_step=state.current_step,
-        prompt="What type of cabinet would you like to create?",
-        options=[
-            {"value": "base", "label": "Base Cabinet (for under countertops)", "description": "Standard base cabinet ~34.5\" high"},
-            {"value": "wall", "label": "Wall Cabinet (above countertops)", "description": "Standard wall cabinet ~12\"-30\" high"},
-            {"value": "tall", "label": "Tall Cabinet (pantry/utility)", "description": "Full-height cabinet ~84\""},
-        ],
-        state=state
-    )
-
-@app.post("/api/wizard/next")
-async def wizard_next_endpoint(request: WizardRequest):
-    """
-    Advance wizard to next step.
-    """
-    state = update_wizard_state(request.conversation_id, "next")
+    # Calculate parts based on cabinet dimensions
+    # Bottom/top: width x depth
+    cuts.append({
+        "part": "Bottom/Top",
+        "quantity": 2,
+        "width": cabinet.width,
+        "height": cabinet.depth,
+        "material": cabinet.material
+    })
     
-    if state.current_step.value == "dimensions":
-        cabinet_type = state.cabinet_type.value if state.cabinet_type else "base"
-        from app.wizard import PRESETS, CabinetType
-        presets = PRESETS.get(CabinetType(cabinet_type), [])
-        return WizardResponse(
-            current_step=state.current_step,
-            prompt="Choose dimensions or use presets",
-            options=[
-                {"value": "preset", "label": "Use Preset", "description": "Select from standard cabinet sizes"},
-                {"value": "custom", "label": "Custom Dimensions", "description": "Enter custom width, height, depth"},
-            ],
-            state=state
-        )
+    # Sides: height x depth
+    cuts.append({
+        "part": "Sides",
+        "quantity": 2,
+        "width": cabinet.height,
+        "height": cabinet.depth,
+        "material": cabinet.material
+    })
     
-    elif state.current_step.value == "components":
-        from app.wizard import COMPONENT_PRESETS
-        return WizardResponse(
-            current_step=state.current_step,
-            prompt="What components do you want to add?",
-            options=[
-                {"value": comp.name, "label": comp.name, "description": comp.description}
-                for comp in COMPONENT_PRESETS[:6]  # First 6 components
-            ],
-            state=state
-        )
+    # Back: width x height
+    cuts.append({
+        "part": "Back",
+        "quantity": 1,
+        "width": cabinet.width,
+        "height": cabinet.height,
+        "material": cabinet.material
+    })
     
-    elif state.current_step.value == "material":
-        from app.wizard import MATERIAL_PRESETS
-        return WizardResponse(
-            current_step=state.current_step,
-            prompt="Choose a material",
-            options=[
-                {"value": mat.name, "label": mat.name, "description": f"{mat.type} - ${mat.price_per_sqft}/sqft"}
-                for mat in MATERIAL_PRESETS
-            ],
-            state=state
-        )
+    return {
+        "cabinet": cabinet,
+        "cuts": cuts,
+        "total_parts": len(cuts),
+        "generated_at": datetime.now()
+    }
+
+# Price calculation
+@app.post("/api/calculate-price")
+async def calculate_price(cabinet: Cabinet):
+    """Calculate material cost for a cabinet"""
+    # Find material price
+    material_price = None
+    for material in materials_db:
+        if material.name == cabinet.material:
+            material_price = material.price_per_sheet
+            break
     
-    elif state.current_step.value == "review":
-        summary = generate_cabinet_summary(state)
-        return WizardResponse(
-            current_step=state.current_step,
-            prompt="Review your cabinet design",
-            options=[
-                {"value": "finish", "label": "Create Cabinet", "description": "Finalize and create cabinet"},
-                {"value": "back", "label": "Go Back", "description": "Make changes"},
-            ],
-            state=state,
-            cabinet_summary=summary
-        )
+    if not material_price:
+        raise HTTPException(status_code=404, detail="Material not found")
     
-    return WizardResponse(
-        current_step=state.current_step,
-        prompt="Continue to next step",
-        options=[],
-        state=state
-    )
-
-@app.post("/api/wizard/select")
-async def wizard_select_endpoint(request: WizardRequest):
-    """
-    Make a selection in current wizard step.
-    """
-    state = update_wizard_state(request.conversation_id, "select", request.data)
+    # Simple cost calculation (in real app, use actual cut list optimization)
+    # Estimate sheet usage based on cabinet volume
+    cabinet_volume = cabinet.width * cabinet.height * cabinet.depth
+    sheet_area = 48.0 * 96.0  # Standard sheet size in square inches
+    estimated_sheets = cabinet_volume / (sheet_area * 0.75)  # Rough estimate
     
-    # Check if wizard is complete
-    from app.wizard import WizardStep
-    if state.current_step == WizardStep.REVIEW:
-        summary = generate_cabinet_summary(state)
-        return WizardResponse(
-            current_step=state.current_step,
-            prompt="Cabinet created successfully!",
-            options=[
-                {"value": "new", "label": "Create Another", "description": "Start a new cabinet"},
-                {"value": "exit", "label": "Return to Designer", "description": "Go to advanced cabinet builder"},
-            ],
-            state=state,
-            cabinet_summary=summary
-        )
+    material_cost = estimated_sheets * material_price
+    hardware_cost = 25.00  # Estimated hardware cost
     
-    # Move to next step automatically
-    next_state = update_wizard_state(request.conversation_id, "next")
-    return WizardResponse(
-        current_step=next_state.current_step,
-        prompt="Continue",
-        options=[],
-        state=next_state
-    )
+    return {
+        "cabinet": cabinet,
+        "material_cost": round(material_cost, 2),
+        "hardware_cost": hardware_cost,
+        "total_cost": round(material_cost + hardware_cost, 2),
+        "estimated_sheets": round(estimated_sheets, 2)
+    }
 
-# 3D Export endpoints
-@app.post("/api/export/{format}")
-async def export_endpoint(format: str, cabinet_data: Dict[str, Any]):
-    """
-    Export cabinet to 3D format (obj, stl, 3mf, dxf)
-    """
-    try:
-        # Create material info from cabinet data
-        material_info = MaterialInfo(
-            name=cabinet_data.get("material", {}).get("name", "Birch Plywood"),
-            type=cabinet_data.get("material", {}).get("type", "plywood"),
-            thickness=cabinet_data.get("material", {}).get("thickness", 18.0)
-        )
-        
-        # Export to specified format
-        exported_content = export_cabinet(cabinet_data, material_info, format)
-        
-        return {
-            "status": "success",
-            "format": format,
-            "content": exported_content if isinstance(exported_content, str) else exported_content.hex(),
-            "filename": f"{cabinet_data.get('name', 'cabinet')}.{format}"
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Export failed: {str(e)}")
-
-# ==========================================
-# Include all routers
-# ==========================================
-
-# Core routers
-app.include_router(cabinets.router)
-app.include_router(materials.router)
-app.include_router(hardware.router)
-app.include_router(cutlists.router)
-app.include_router(auth.router)
-app.include_router(collaboration.router)
-app.include_router(projects.router)
-app.include_router(gcode.router)
-app.include_router(stripe.router)
-
-# Templates router (from app.templates)
-app.include_router(templates_router)
-
-# Payment & Pricing
-app.include_router(price_feeds.router)
-
-# Phase 4 - Advanced Features
-app.include_router(advanced_nesting.router)
-app.include_router(edge_banding.router)
-app.include_router(hardware_recommendations.router)
-
-# Phase 5 - Quality of Life
-app.include_router(scrap.router)
-app.include_router(ar_scanner.router)
-app.include_router(sketch_to_design.router)
-app.include_router(scratch_build.router)
-
-# Phase 5 - Localization & Community
-app.include_router(localization.router)
-app.include_router(community_gallery.router)
-app.include_router(store_integration.router)
-
-# Phase 6 - Compliance
-app.include_router(gdpr.router)
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
